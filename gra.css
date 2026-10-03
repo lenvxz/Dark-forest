@@ -1,0 +1,142 @@
+body {
+    background-color: rgb(46, 46, 46);
+    margin: 0;
+    overflow: hidden;
+}
+
+h1 {
+    color: white;
+    font-size: 70px;
+    margin: 0;
+    position: absolute;      
+    top: 20px;        
+    left: 50%;              
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;            
+}
+
+#kontener {
+    position: relative;    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;    
+    height: 100vh;        
+}
+
+#start {
+    width: 200px;          
+    height: 50px;          
+    font-size: 15px;
+    border-radius: 20px;
+    border: none;          
+    cursor: pointer;        
+    border: 1px solid white;
+    color: white;
+    background-color: rgb(46, 46, 46);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#start:hover {
+    background-color: rgb(94, 96, 97);
+    transform: translateY(-3px);
+}
+
+.kociol {
+    width: 300px;
+    height: auto;
+    position: absolute;
+    bottom: 0px;
+}
+
+.pajeczyna {
+    width: 500px;
+    height: auto;
+    position: absolute;
+    left: -100px;
+    top: -100px;
+}
+
+.pajeczyna2 {
+    transform: scaleX(-1);
+    width: 500px;
+    height: auto;
+    position: absolute;
+    right: -100px;
+    top: -100px;
+}
+
+.typing-container {
+    max-width: 800px;
+    padding: 20px;
+    text-align: justify;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+#printer-text {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    line-height: 1.6;
+    display: inline;
+    white-space: pre-wrap;
+}
+
+#printer-text.typing-active::after {
+    content: '|';
+    font-weight: bold;
+    color: white;
+    animation: miganie-kursora 0.5s step-end infinite;
+}
+
+@keyframes miganie-kursora {
+    from, to { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Wygląd przycisków z wyborami - dopasowany do Twojego stylu */
+#wybory-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+    align-items: center;
+}
+
+.przycisk-wyboru {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    background-color: rgb(46, 46, 46);
+    border: 1px solid white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: left;
+}
+
+.przycisk-wyboru:hover {
+    background-color: rgb(94, 96, 97);
+    transform: translateY(-2px);
+}
+.drzewo{
+    width: 23%;
+    height: auto;
+
+}
+.drzewa{
+    display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  width: 100%; 
+ position: absolute;
+  bottom: -30px;
+  left: 0;
+  padding: -10px;
+}

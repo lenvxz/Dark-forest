@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="gra.css">
+    <title>dark forest</title>
+</head>
+<body>  
+    <img src="pajeczyna.png" class="pajeczyna" alt="pajeczyna">
+    <img src="pajeczyna.png" class="pajeczyna2" alt="pajeczyna">
+    
+    <div class="drzewa">
+        <img src="tree.png" class="drzewo" alt="drzewo">
+        <img src="tree.png" class="drzewo" alt="drzewo">
+        <img src="tree.png" class="drzewo" alt="drzewo">
+        <img src="tree.png" class="drzewo" alt="drzewo">
+    </div>
+    
+    <div id="kontener">
+        <h1>dark forest</h1>
+        <button id="start" onclick="tekst()">Zacznij grę</button>
+        
+        <div class="typing-container">
+            <h2 id="wstep-text" style="color: #999; font-family: 'Courier New', Courier, monospace; margin-bottom: 20px; display: none;">PROLOG</h2>
+            <p id="printer-text"></p>
+        </div>
+
+        <div id="wybory-container" style="display: none;"></div>
+
+        <button id="restart-btn" onclick="restartGry()" style="display: none;">Zagraj ponownie</button>
+
+        <p id="skip-info" style="font-size: 0.8em; color: gray; display: none; position: absolute; bottom: 20px;">Wciśnij SPACJĘ, aby przejść dalej.</p>
+    </div>
+
+    <audio id="tlo-muzyka" src="horror.mp3" loop></audio>
+
+<script>
+const FABULA = {
+    prolog: {
+        naglowek: "PROLOG",
+        tekst: `Mrok nie był tu zwykłym brakiem światła – żył własnym życiem.
+
+Osiemnaste urodziny Catherine nie oznaczały świętowania. Oznaczały przetrwanie. Zgodnie ze starożytnym Pakiem Przejścia, każda młoda wiedźma z jej rodu musiała samotnie pokonać Czarny Las w ciągu 24 godzin.
+
+Brak wygranej oznaczał wieczne wygnanie, a jej ciało miało na zawsze naznaczyć piętno "WYGNANEJ". Odbierają ci wszystko: różdżkę, księgę, chroniące amulety. Zostajesz sam na sam z lasem, który żywi się strachem.`
+    },
+    scena1: {
+        naglowek: "ROZDZIAŁ I: SZEPTY W MROKU",
+        tekst: `Otworzyła oczy. Zimna, lepka wilgoć podłoża natychmiast wyrwała ją ze snu. Trawa wokół niej była czarna, jakby zwęglona.
+
+Ciszę polany nagle przerwał dźwięk – powolne, ciężkie kroki na mokrym mchu. Ktoś lub coś idzie tuż za jej plecami.
+
+Catherine zamarła, a serce załomotało jej w piersi. Pomału, starając się nie wydawać dźwięku, odwróciła się za siebie...
+
+Nikogo nie było. Tylko gęsta, nieruchoma mgła ścieląca się między potężnymi pniami.
+
+Gdy obróciła się z powrotem, jej wzrok padł na obumarłe, gigantyczne drzewo. W jego spękanej korze wyryte były świeże, krwawiące czerwoną żywicą znaki – zasady rytuału:
+
+1. NIE ODZYWAJ SIĘ DO NIKOGO I NICZEGO W LESIE.
+2. NIE DOTYKAJ I NIE JEDZ CZARNYCH JAGÓD.
+3. PRZEJDŹ LAS W 24 GODZINY.
+
+Tuż pod słowami, w korze tkwiło wciśnięte pęknięte zwierciadło i zgięta kartka ze skrawkiem czarnej wstążki.`,
+        wybory: [
+            {
+                label: "1. Podnieś kartkę i zbadaj co na niej napisano",
+                reakcja: `Rozwinęła drżącymi dłońmi wilgotny papier. Pismo było chaotyczne, jakby pisane w pośpiechu i strachu:
+
+„Nie ufaj ścieżce po prawej stronie. Ona żywi się krwią tych, które się wahały. Idź prosto i nie patrz w tył, cokolwiek usłyszysz.”
+
+W tym samym momencie wietrzyk przyniósł mroźny szept Juliette – cichy, drwiący głos, który zdawał się dobiegać z wnętrza samego pnia:
+
+– Czas ucieka, mała wiedźmo... Zegarek już bije.`,
+                akcja: "dalej"
+            },
+            {
+                label: "2. Zignoruj kartkę, dotknij krwawiącego drzewa",
+                reakcja: `Gdy jej palce dotknęły czerwonej żywicy, przez jej ciało przeszedł lodowaty impuls. Wizja błysnęła pod jej powiekami: widziała dziesiątki dziewcząt błąkających się bez celu, ze skórą pokrytą czarnymi pęknięciami.
+
+– Pierwsza zasada została złamana przez wiele przed tobą... – usłyszała lodowaty głos Juliette dobiegający z gęstwiny. – Nie popełnij ich błędu.`,
+                akcja: "dalej"
+            },
+            {
+                label: "3. Odbij się od drzewa i natychmiast wejdź w głąb gęstwiny",
+                reakcja: `Nie chciała marnować ani sekundy. Odepchnęła się od przerażającego pnia i ruszyła szybkim krokiem w mrok.
+
+Słyszała, jak mgła za jej plecami gęstnieje, a kroki, które wcześniej ustały, teraz zaczęły podążać równo z jej tempem.
+
+Nie odwróciła się.
+
+Po kilku minutach kroki nagle ucichły.`,
+                akcja: "dalej"
+            }
+        ]
+    },
+    jagody: {
+        naglowek: "ROZDZIAŁ II: SŁODKA TRUCIZNA",
+        tekst: `Gęstwina wciągnęła ją całkowicie. Światło księżyca ledwo przebijało się przez smoliście czarne korony drzew.
+
+Po kilkunastu minutach marszu natrafiła na polanę usianą gęstymi krzewami. Wisiały na nich dorodne, czarne jagody, z których skapywał gęsty, słodko pachnący sok. Zapach był tak intensywny, że aż kręciło się w głowie.
+
+Głód i zmęczenie zaczęły dawać o sobie znać.
+
+Co zamierzasz zrobić?`,
+        wybory: [
+            { label: "1. Spróbuj jagód – zapach jest zbyt kuszący", akcja: "zjedz" },
+            { label: "2. Zerwij kilka do kieszeni na później", akcja: "zerwij" },
+            { label: "3. Omiń krzaki szerokim łukiem", akcja: "omin" }
+        ]
+    },
+    zerwij_jagody: {
+        naglowek: "ROZDZIAŁ II: SŁODKA TRUCIZNA",
+        tekst: `Catherine wyciągnęła rękę i zerwała kilka jagód.
+
+W chwili, gdy dotknęły jej dłoni, ich skórka zaczęła pulsować.
+
+Raz.
+
+Drugi.
+
+Trzeci.
+
+Czarne owoce wyglądały teraz jak małe, bijące serca.
+
+Catherine natychmiast chciała je wyrzucić, ale jagody przykleiły się do jej skóry.
+
+– Nie dotykaj tego, czego nie rozumiesz...
+
+Głos Juliette zabrzmiał tuż za jej plecami.
+
+Catherine gwałtownie odrzuciła owoce.
+
+Upadły na ziemię i natychmiast wrosły w czarną trawę.
+
+W miejscu, gdzie spadły, pojawiła się cienka ścieżka prowadząca głębiej w las.
+
+Nie wiedziała, czy właśnie dostała ostrzeżenie...
+
+czy pułapkę.
+
+Musisz wybrać drogę.`,
+        wybory: [
+            { label: "1. Podążaj za ścieżką utworzoną przez jagody", akcja: "sciezka" },
+            { label: "2. Zignoruj ścieżkę i idź prosto przez las", akcja: "prosto" }
+        ]
+    },
+    sciezka_jagod: {
+        naglowek: "ROZDZIAŁ III: ŚLADY",
+        tekst: `Catherine ruszyła za czarną ścieżką.
+
+Im dalej szła, tym bardziej las wydawał się cichy.
+
+Po chwili zauważyła na drzewach ślady dłoni.
+
+Dziesiątki.
+
+A może setki.
+
+Wszystkie prowadziły w jednym kierunku.
+
+Na jednym z pni zobaczyła wyryte imię:
+
+„ELISE”.
+
+Pod nim znajdowało się kolejne:
+
+„MARIE”.
+
+A niżej:
+
+„JULIETTE”.
+
+Catherine zamarła.
+
+To nie był zwykły las.
+
+To był cmentarz wszystkich dziewcząt, które przeszły tę próbę przed nią.
+
+Nagle gdzieś z przodu rozległ się kobiecy płacz.`,
+        wybory: [
+            { label: "1. Idź za płaczem", akcja: "placz" },
+            { label: "2. Zignoruj płacz i kontynuuj marsz", akcja: "ignoruj" }
+        ]
+    },
+    placz: {
+        naglowek: "ROZDZIAŁ III: GŁOS W LESIE",
+        tekst: `Catherine ruszyła w stronę płaczu.
+
+– Pomocy...
+
+Głos był cichy.
+
+Prawie dziecięcy.
+
+Za kolejnym drzewem zobaczyła dziewczynę siedzącą na ziemi.
+
+Miała długie, mokre włosy i podarte ubranie.
+
+– Proszę... pomóż mi.
+
+Catherine przypomniała sobie pierwszą zasadę.
+
+NIE ODZYWAJ SIĘ DO NIKOGO I NICZEGO W LESIE.
+
+Dziewczyna powoli podniosła głowę.
+
+Jej twarz była pozbawiona oczu.
+
+– Catherine...
+
+Wiedziała, że ta istota zna jej imię.
+
+Istota wyciągnęła rękę.
+
+– Podejdź.
+
+Catherine zrobiła krok do tyłu.
+
+Wtedy dziewczyna uśmiechnęła się.
+
+Jej szczęka rozwarła się nienaturalnie szeroko.
+
+– Wiedziałam, że przyjdziesz.`,
+        wybory: [
+            { label: "1. Uciekaj bez oglądania się za siebie", akcja: "uciekaj" },
+            { label: "2. Zostań i spróbuj zrozumieć, czym jest istota", akcja: "zostan" }
+        ]
+    },
+    ucieczka_istota: {
+        naglowek: "ZAKOŃCZENIE: CENA CIEKAWOŚCI",
+        tekst: `Catherine odwróciła się i pobiegła.
+
+Nie patrzyła za siebie.
+
+Nie chciała słyszeć kroków.
+
+Ale kroki pojawiły się za nią.
+
+Coraz bliżej.
+
+Coraz szybciej.
+
+Nagle poczuła czyjąś dłoń na ramieniu.
+
+Zatrzymała się.
+
+Powoli odwróciła głowę.
+
+Nikogo nie było.
+
+Tylko czarna wstążka owinięta wokół jej nadgarstka.
+
+Taka sama jak ta, którą znalazła przy drzewie.
+
+Wstążka zacisnęła się.
+
+Catherine upadła na kolana.
+
+– Znalazłam cię.
+
+Głos Juliette rozległ się w ciemności.
+
+Las pochłonął jej krzyk.
+
+Rano na skraju lasu znaleziono jedynie czarną wstążkę.
+
+KONIEC.`,
+        koniec: true
+    },
+    ignoruj_placz: {
+        naglowek: "ROZDZIAŁ IV: DROGA BEZ GŁOSU",
+        tekst: `Catherine zacisnęła zęby i nie odpowiedziała.
+
+Nie odwróciła się.
+
+Płacz za jej plecami stawał się coraz głośniejszy.
+
+– Catherine...
+
+Nie zatrzymała się.
+
+– Catherine...
+
+Głos zmienił się.
+
+Teraz brzmiał jak jej własny.
+
+– Catherine, proszę...
+
+W końcu wszystko ucichło.
+
+Przed nią pojawiło się światło.
+
+Pierwsze prawdziwe światło, jakie widziała od początku próby.
+
+Las kończył się.
+
+Ale pomiędzy drzewami stała jeszcze jedna postać.
+
+Juliette.
+
+Tym razem nie uśmiechała się.
+
+– Dobrze – powiedziała cicho. – Uczysz się.
+
+Catherine minęła ją bez słowa.
+
+Kilka godzin później zobaczyła pierwsze kamienne schody prowadzące poza Czarny Las.
+
+Próba jeszcze się nie skończyła.
+
+Ale po raz pierwszy Catherine uwierzyła, że może ją przeżyć.`,
+        wybory: [
+            { label: "1. Wejdź po kamiennych schodach", akcja: "schody" }
+        ]
+    },
+    omin_jagody: {
+        naglowek: "ROZDZIAŁ III: CZARNA ŚCIEŻKA",
+        tekst: `Catherine ominęła krzewy szerokim łukiem.
+
+Nie ufała zapachowi.
+
+Nie ufała ciszy.
+
+I przede wszystkim nie ufała temu lasowi.
+
+Po kilkunastu minutach marszu zobaczyła rozwidlenie.
+
+Jedna ścieżka prowadziła w dół.
+
+Druga wspinała się między drzewami.
+
+Na ziemi leżał mały srebrny amulet.
+
+Wyglądał dokładnie jak rodzinny amulet Catherine.
+
+Tylko że jej prawdziwy amulet został odebrany przed wejściem do lasu.
+
+Ktoś go tutaj zostawił.
+
+Albo coś chciało, żeby tak pomyślała.`,
+        wybory: [
+            { label: "1. Podnieś amulet", akcja: "amulet" },
+            { label: "2. Zostaw go i wybierz górną ścieżkę", akcja: "gora" }
+        ]
+    },
+    amulet: {
+        naglowek: "ROZDZIAŁ IV: PUŁAPKA",
+        tekst: `Catherine podniosła amulet.
+
+Był lodowaty.
+
+W chwili, gdy zacisnęła na nim palce, usłyszała szept:
+
+– W końcu.
+
+Amulet rozpadł się w jej dłoni.
+
+Z ziemi wystrzeliły czarne korzenie.
+
+Oplotły jej kostki.
+
+Catherine próbowała się wyrwać, ale korzenie zaciskały się coraz mocniej.
+
+Wtedy zobaczyła twarz w korze drzewa.
+
+Twarz Juliette.
+
+– Mówiłam ci, żebyś nie dotykała rzeczy, których nie rozumiesz.
+
+Catherine szarpnęła się ostatni raz.
+
+Korzenie wciągnęły ją pod ziemię.
+
+Jej ostatnią myślą było to, że las nie potrzebował, żeby złamała zasadę.
+
+Wystarczyło, że uwierzyła w fałszywą nadzieję.
+
+KONIEC.`,
+        koniec: true
+    },
+    gora: {
+        naglowek: "ROZDZIAŁ IV: ŚWIATŁO",
+        tekst: `Catherine zostawiła amulet.
+
+Wybrała górną ścieżkę.
+
+Każdy krok był coraz cięższy, ale las powoli się rozrzedzał.
+
+Po godzinie zobaczyła coś, czego nie spodziewała się zobaczyć.
+
+Świt.
+
+Pierwsze promienie słońca prześwitywały między gałęziami.
+
+Przed nią znajdowała się kamienna brama.
+
+Po drugiej stronie stała jej rodzina.
+
+Próba dobiegła końca.
+
+Catherine przekroczyła granicę lasu.
+
+Na jej brzuchu nadal widniało znamię.
+
+Ale napis „WYGNANA” nie pojawił się.
+
+Juliette stała daleko między drzewami.
+
+Po raz pierwszy skinęła jej głową.
+
+– Przeżyłaś.
+
+Catherine spojrzała na Czarny Las.
+
+Wiedziała, że to nie był koniec.
+
+To był dopiero początek.`,
+        koniec: true
+    },
+    zjedz_jagody: {
+        naglowek: "ROZDZIAŁ III: SŁODKA TRUCIZNA",
+        tekst: `Słodki smak natychmiast wypełnił jej usta, ale chwilę później zamienił się w palący popiół.
+
+Z głębi lasu rozległ się cichy, kpiący śmiech.
+
+Zza pnia wyłoniła się Juliette z dłońmi splecionymi na piersi.
+
+– Złamałaś drugą zasadę tak szybko? Widzisz... ten las pamięta każdy błąd.
+
+Znamię na brzuchu Catherine zaczęło piec nieznośnym ogniem.
+
+Czuła, jak czarny tusz prześladującego ją piętna zaczyna samoczynnie wpijać się w jej skórę.
+
+„ZHAŃBIONA! WYGNANA!” – szeptały drzewa.
+
+Musisz działać NATYCHMIAST.`,
+        wybory: [
+            { label: "a) Padnij na kolana i błagaj o litość", akcja: "blagaj" },
+            { label: "b) Rzuć się do ucieczki w nieznaną część lasu", akcja: "ucieczka" },
+            { label: "c) Zaatakuj Juliette gołymi rękami", akcja: "atak" }
+        ]
+    },
+    blagaj: {
+        naglowek: "ZAKOŃCZENIE: LITOŚĆ",
+        tekst: `Catherine upadła na kolana.
+
+– Proszę...
+
+Juliette patrzyła na nią w ciszy.
+
+– Błagam. Nie chcę zostać wygnana.
+
+Przez chwilę w lesie nie było słychać niczego.
+
+Juliette podeszła bliżej.
+
+– Wiesz, ile dziewcząt wypowiedziało te same słowa?
+
+Catherine milczała.
+
+Juliette przykucnęła przed nią.
+
+– Żadna nie przetrwała dlatego, że błagała.
+
+Wyciągnęła dłoń.
+
+Catherine spojrala na nią.
+
+Nie wiedziała, czy powinna ją przyjąć.
+
+Po chwili Juliette powiedziała:
+
+– Wstań.
+
+Catherine podniosła głowę.
+
+– Próba jeszcze się nie skończyła.
+
+Juliette wskazała na wąską ścieżkę między drzewami.
+
+– Masz trzy godziny.
+
+Catherine wstała.
+
+Ból po jagodach nadal palił jej ciało.
+
+Ale dostała drugą szansę.
+
+Ruszyła przed siebie.
+
+KONIEC ROZDZIAŁU.`,
+        koniec: true
+    },
+    atak_juliette: {
+        naglowek: "ZAKOŃCZENIE: GNIEW",
+        tekst: `Catherine rzuciła się na Juliette.
+
+Nie miała różdżki.
+
+Nie miała księgi.
+
+Nie miała żadnej ochrony.
+
+Miała tylko gniew.
+
+Jej pięść uderzyła w ramię Juliette.
+
+W tej samej chwili cały las zamilkł.
+
+Juliette spojrzała na Catherine.
+
+Nie była zła.
+
+Była rozczarowana.
+
+– Nadal niczego nie rozumiesz.
+
+Pstryknęła palcami.
+
+Catherine została odrzucona kilka metrów dalej.
+
+Uderzyła plecami o drzewo.
+
+Juliette podeszła do niej.
+
+– Siła nie zawsze oznacza zwycięstwo.
+
+Dotknęła palcem jej czoła.
+
+Catherine straciła przytomność.
+
+Kiedy się obudziła, znajdowała się przed bramą swojego domu.
+
+Na jej brzuchu widniało jedno słowo:
+
+„WYGNANA”.
+
+KONIEC.`,
+        koniec: true
+    },
+    zakonczenie_ucieczka: {
+        naglowek: "ZAKOŃCZENIE: TRAGICZNA UCIECZKA",
+        tekst: `Panika przysłoniła jej zdrowy rozsądek. Catherine rzuciła się do ślepej ucieczki, zbiegając z wyznaczonej ścieżki.
+
+Gałęzie rozcinały jej twarz i ramiona, ale ból piętna na brzuchu był gorszy.
+
+Słyszała za sobą miarowy, powolny krok Juliette, która nawet nie musiała biec.
+
+Przed nią pojawiła się czarna, gładka tafla leśnego stawu.
+
+Nie zastanawiając się ani chwili, wskoczyła do lodowatej wody.
+
+Woda była gęsta i piekąca.
+
+Gdy Catherine wynurzyła się, by złapać oddech, zobaczyła Juliette stojącą na brzegu z przerażonym wyrazem twarzy.
+
+– Nie do tego stawu...
+
+Szept wiedźmy zgasł w szumie drzew.
+
+Catherine spojrzała na swoje dłonie.
+
+Pod skórę wbijały się tysiące małych, czarnych odwłoków leśnych pasożytów, wyżerając tkankę od środka.
+
+Ból był nie do opisania.
+
+Chciała wydać z siebie krzyk, ale gęste wodorosty owinęły się wokół jej szyi i pociągnęły ją w głąb czarnej toni.
+
+Niedługo potem na powierzchni wody unosiły się już tylko długie, brązowe włosy...
+
+KONIEC.`,
+        koniec: true
+    }
+};
+
+const elTekst = document.getElementById('printer-text');
+const elNaglowek = document.getElementById('wstep-text');
+const btnStart = document.getElementById('start');
+const btnRestart = document.getElementById('restart-btn');
+const infoSpacja = document.getElementById('skip-info');
+const kontenerWyborow = document.getElementById('wybory-container');
+const audio = document.getElementById('tlo-muzyka');
+
+let aktualnyTekst = "";
+let indeks = 0;
+let interwal = null;
+let czyPisze = false;
+let etapGry = "prolog";
+
+function rozpocznijWypisywanie(tekst) {
+    clearInterval(interwal);
+    aktualnyTekst = tekst;
+    elTekst.textContent = "";
+    indeks = 0;
+    czyPisze = true;
+
+    elTekst.classList.add('typing-active');
+    kontenerWyborow.style.display = 'none';
+
+    if (btnRestart) {
+        btnRestart.style.display = 'none';
+    }
+
+    infoSpacja.style.display = 'block';
+    infoSpacja.textContent = 'Wciśnij SPACJĘ, aby przyspieszyć.';
+
+    interwal = setInterval(() => {
+        if (indeks < aktualnyTekst.length) {
+            elTekst.textContent += aktualnyTekst.charAt(indeks);
+            indeks++;
+        } else {
+            zakonczPisanie();
+        }
+    }, 25);
+}
+
+function zakonczPisanie() {
+    clearInterval(interwal);
+    czyPisze = false;
+    elTekst.classList.remove('typing-active');
+    sprawdzDalszeKroki();
+}
+
+function sprawdzDalszeKroki() {
+    if (etapGry === "prolog") {
+        infoSpacja.textContent = 'Wciśnij SPACJĘ, aby przejść dalej.';
+    } else if (etapGry === "scena1") {
+        pokazWybory(FABULA.scena1.wybory, (wybor) => {
+            etapGry = "reakcja_drzewo";
+            elNaglowek.style.display = 'none';
+            rozpocznijWypisywanie(wybor.reakcja);
+        });
+    } else if (etapGry === "reakcja_drzewo") {
+        infoSpacja.textContent = 'Wciśnij SPACJĘ, aby wejść w głąb lasu.';
+    } else if (etapGry === "jagody") {
+        pokazWybory(FABULA.jagody.wybory, (wybor) => {
+            if (wybor.akcja === "zjedz") {
+                etapGry = "zjedz_jagody";
+                elNaglowek.style.display = 'block';
+                elNaglowek.textContent = FABULA.zjedz_jagody.naglowek;
+                rozpocznijWypisywanie(FABULA.zjedz_jagody.tekst);
+            } else if (wybor.akcja === "zerwij") {
+                etapGry = "zerwij_jagody";
+                elNaglowek.style.display = 'block';
+                elNaglowek.textContent = FABULA.zerwij_jagody.naglowek;
+                rozpocznijWypisywanie(FABULA.zerwij_jagody.tekst);
+            } else if (wybor.akcja === "omin") {
+                etapGry = "omin_jagody";
+                elNaglowek.style.display = 'block';
+                elNaglowek.textContent = FABULA.omin_jagody.naglowek;
+                rozpocznijWypisywanie(FABULA.omin_jagody.tekst);
+            }
+        });
+    } else if (etapGry === "zjedz_jagody") {
+        pokazWybory(FABULA.zjedz_jagody.wybory, (wybor) => {
+            if (wybor.akcja === "ucieczka") {
+                etapGry = "zakonczenie_ucieczka";
+                elNaglowek.style.display = 'block';
+                elNaglowek.textContent = FABULA.zakonczenie_ucieczka.naglowek;
+                rozpocznijWypisywanie(FABULA.zakonczenie_ucieczka.tekst);
+            } else if (wybor.akcja === "blagaj") {
+                etapGry = "blagaj";
+                elNaglowek.style.display = 'block';
+                elNaglowek.textContent = FABULA.blagaj.naglowek;
+                rozpocznijWypisywanie(FABULA.blagaj.tekst);
+            } else if (wybor.akcja === "atak") {
+                etapGry = "atak_juliette";
+                elNaglowek.style.display = 'block';
+                elNaglowek.textContent = FABULA.atak_juliette.naglowek;
+                rozpocznijWypisywanie(FABULA.atak_juliette.tekst);
+            }
+        });
+    } else if (etapGry === "zerwij_jagody") {
+        pokazWybory(FABULA.zerwij_jagody.wybory, (wybor) => {
+            if (wybor.akcja === "sciezka") {
+                etapGry = "sciezka_jagod";
+                elNaglowek.textContent = FABULA.sciezka_jagod.naglowek;
+                rozpocznijWypisywanie(FABULA.sciezka_jagod.tekst);
+            } else if (wybor.akcja === "prosto") {
+                etapGry = "omin_jagody";
+                elNaglowek.textContent = FABULA.omin_jagody.naglowek;
+                rozpocznijWypisywanie(FABULA.omin_jagody.tekst);
+            }
+        });
+    } else if (etapGry === "sciezka_jagod") {
+        pokazWybory(FABULA.sciezka_jagod.wybory, (wybor) => {
+            if (wybor.akcja === "placz") {
+                etapGry = "placz";
+                elNaglowek.textContent = FABULA.placz.naglowek;
+                rozpocznijWypisywanie(FABULA.placz.tekst);
+            } else if (wybor.akcja === "ignoruj") {
+                etapGry = "ignoruj_placz";
+                elNaglowek.textContent = FABULA.ignoruj_placz.naglowek;
+                rozpocznijWypisywanie(FABULA.ignoruj_placz.tekst);
+            }
+        });
+    } else if (etapGry === "placz") {
+        pokazWybory(FABULA.placz.wybory, (wybor) => {
+            etapGry = "ucieczka_istota";
+            elNaglowek.textContent = FABULA.ucieczka_istota.naglowek;
+            rozpocznijWypisywanie(FABULA.ucieczka_istota.tekst);
+        });
+    } else if (etapGry === "ignoruj_placz") {
+        pokazWybory(FABULA.ignoruj_placz.wybory, () => {
+            etapGry = "gora";
+            elNaglowek.textContent = FABULA.gora.naglowek;
+            rozpocznijWypisywanie(FABULA.gora.tekst);
+        });
+    } else if (etapGry === "omin_jagody") {
+        pokazWybory(FABULA.omin_jagody.wybory, (wybor) => {
+            if (wybor.akcja === "amulet") {
+                etapGry = "amulet";
+                elNaglowek.textContent = FABULA.amulet.naglowek;
+                rozpocznijWypisywanie(FABULA.amulet.tekst);
+            } else if (wybor.akcja === "gora") {
+                etapGry = "gora";
+                elNaglowek.textContent = FABULA.gora.naglowek;
+                rozpocznijWypisywanie(FABULA.gora.tekst);
+            }
+        });
+    } else if (FABULA[etapGry]?.koniec) {
+        infoSpacja.style.display = 'none';
+        if (btnRestart) {
+            btnRestart.style.display = 'block';
+        }
+    }
+}
+
+function pokazWybory(opcje, onSelect) {
+    infoSpacja.style.display = 'none';
+    kontenerWyborow.innerHTML = "";
+    kontenerWyborow.style.display = "flex";
+
+    opcje.forEach(opcja => {
+        const btn = document.createElement("button");
+        btn.className = "przycisk-wyboru";
+        btn.textContent = opcja.label;
+        btn.onclick = () => {
+            kontenerWyborow.style.display = 'none';
+            onSelect(opcja);
+        };
+        kontenerWyborow.appendChild(btn);
+    });
+}
+
+function tekst() {
+    if (audio) {
+        audio.play().catch(() => {});
+    }
+    if (btnStart) {
+        btnStart.style.display = 'none';
+    }
+    elNaglowek.style.display = 'block';
+    elNaglowek.textContent = FABULA.prolog.naglowek;
+    etapGry = "prolog";
+    rozpocznijWypisywanie(FABULA.prolog.tekst);
+}
+
+function restartGry() {
+    if (btnRestart) {
+        btnRestart.style.display = 'none';
+    }
+    elNaglowek.style.display = 'block';
+    elNaglowek.textContent = FABULA.prolog.naglowek;
+    etapGry = "prolog";
+    rozpocznijWypisywanie(FABULA.prolog.tekst);
+}
+
+window.addEventListener('keydown', (event) => {
+    if (event.code === 'Space' || event.key === ' ') {
+        event.preventDefault();
+
+        if (czyPisze) {
+            elTekst.textContent = aktualnyTekst;
+            zakonczPisanie();
+        } else if (etapGry === "prolog") {
+            etapGry = "scena1";
+            elNaglowek.textContent = FABULA.scena1.naglowek;
+            rozpocznijWypisywanie(FABULA.scena1.tekst);
+        } else if (etapGry === "reakcja_drzewo") {
+            etapGry = "jagody";
+            elNaglowek.style.display = 'block';
+            elNaglowek.textContent = FABULA.jagody.naglowek;
+            rozpocznijWypisywanie(FABULA.jagody.tekst);
+        }
+    }
+});
+</script>
+</body>
+</html>
