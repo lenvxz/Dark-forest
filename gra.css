@@ -140,3 +140,16 @@ h1 {
   left: 0;
   padding: -10px;
 }
+#restart-btn{
+      width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    background-color: rgb(46, 46, 46);
+    border: 1px solid white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: left;
+}
